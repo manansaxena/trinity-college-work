@@ -1,10 +1,5 @@
 import os
-os.system("git clone https://github.com/hukkelas/DSFD-Pytorch-Inference.git")
-os.system("cd DSFD-Pytorch-Inference")
-os.system("python3 setup.py install")
-os.system("cd ..")
-
-
+os.system("python3 DSFD-Pytorch-Inference/setup.py install")
 
 import streamlit as st 
 import cv2
