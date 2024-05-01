@@ -7,5 +7,4 @@ torch
 torchvision
 tqdm
 Pillow
-git+https://github.com/hukkelas/DSFD-Pytorch-Inference.git
 opencv-python-headless==4.9.0.80
