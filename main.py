@@ -1,7 +1,3 @@
-import os
-# os.system("pip install git+https://github.com/hukkelas/DSFD-Pytorch-Inference.git")
-# os.system("python3 DSFD-Pytorch-Inference/setup.py install")
-
 import streamlit as st 
 import cv2
 import face_detection
@@ -38,8 +34,8 @@ def anonymize_face_pixelate(image, blocks=3):
 	# return the pixelated blurred image
 	return image
 
-def run_pixelate(image,method):
-    detector = face_detection.build_detector(method, confidence_threshold=.5, nms_iou_threshold=.3)
+def run_pixelate(image,method,threshold):
+    detector = face_detection.build_detector(method, confidence_threshold=threshold, nms_iou_threshold=.3)
     
     detections = detector.detect(image)
     
@@ -58,18 +54,24 @@ def run():
     )
 
     st.write("# Pixelate those faces on your photos")
+    st.image(Image.open("pearljam_example.png"))
+
+    # upload file
     st.write('### Upload the photos')
     uploaded_files = st.file_uploader("# **Upload the photos**", accept_multiple_files=True, label_visibility="hidden")
-
+    
+    # face detection parameters
     st.write("### Choose a face detection method")
     method = st.selectbox("Choose a face detection method",('DSFDDetector', 'RetinaNetResNet50', 'RetinaNetMobileNetV1'),index=None,
                            placeholder="Choose a face detection method...", label_visibility="hidden")
-    st.write('You selected:', method)
-
+    st.write("### Choose the confidence threshold for face detector")
+    threshold = st.select_slider("face detection threshold",label_visibility="hidden",options=np.around(np.arange(0.1,1,0.1),decimals=1),value=(0.1,0.6))
+    
     pixelated_images = []
     captions = []
     zip_buffer = io.BytesIO()
 
+    #main loop
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         if uploaded_files and method:
             zip_buffer = io.BytesIO()
@@ -78,8 +80,8 @@ def run():
                 for uploaded_file in uploaded_files:
                     photo = Image.open(uploaded_file).convert('RGB')
                     photo = np.array(photo)
-                    # Assuming you have a function to process the photo
-                    photo = run_pixelate(photo,method)
+                    # run pixelater
+                    photo = run_pixelate(photo,method,threshold[1])
                     pixelated_images.append(photo)
                     photo = Image.fromarray(photo)
                     captions.append(uploaded_file.name)
@@ -92,6 +94,7 @@ def run():
 
             st.image(pixelated_images, caption=captions, width=250)
 
+            #show a download button for the zipped pixelated images
             zip_buffer.seek(0)
             st.download_button(
                 label="Download All Pixelated Images",
