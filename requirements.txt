@@ -3,7 +3,7 @@ ipywidgets
 matplotlib
 numpy
 pandas
-torch==2.3.0
+torch
 torchvision
 tqdm
 Pillow
