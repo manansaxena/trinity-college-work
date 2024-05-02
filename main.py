@@ -54,7 +54,7 @@ def run():
     )
 
     st.write("# Pixelate those faces on your photos")
-    st.image(Image.open("pearljam_example.png"))
+    st.image(Image.open("base_photo.png"))
 
     # upload file
     st.write('### Upload the photos')
