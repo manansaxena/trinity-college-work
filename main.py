@@ -58,15 +58,23 @@ def run():
 
     # upload file
     st.write('### Upload the photos')
-    uploaded_files = st.file_uploader("# **Upload the photos**", accept_multiple_files=True, label_visibility="hidden")
+    uploaded_files = st.file_uploader("# **Upload the photos**", accept_multiple_files=True, label_visibility="hidden", type=['png','jpg','jpeg'])
     
     # face detection parameters
     st.write("### Choose a face detection method")
     method = st.selectbox("Choose a face detection method",('DSFDDetector', 'RetinaNetResNet50', 'RetinaNetMobileNetV1'),index=None,
                            placeholder="Choose a face detection method...", label_visibility="hidden")
     st.write("### Choose the confidence threshold for face detector")
-    threshold = st.select_slider("face detection threshold",label_visibility="hidden",options=np.around(np.arange(0.1,1,0.1),decimals=1),value=(0.1,0.6))
-    
+    # threshold = st.select_slider("face detection threshold",label_visibility="hidden",options=np.around(np.arange(0.1,1,0.1),decimals=1),value=(0.1,0.6))
+    threshold = st.slider(
+        label="Face Detection Threshold",  # This label is not hidden; modify as needed
+        min_value=0.1,
+        max_value=1.0,
+        value=0.6,  # Default value set to 0.6
+        step=0.1,
+        format="%.1f",  # Ensures that the slider step displays values to one decimal place
+        label_visibility="hidden"
+    )
     pixelated_images = []
     captions = []
     zip_buffer = io.BytesIO()
@@ -81,7 +89,7 @@ def run():
                     photo = Image.open(uploaded_file).convert('RGB')
                     photo = np.array(photo)
                     # run pixelater
-                    photo = run_pixelate(photo,method,threshold[1])
+                    photo = run_pixelate(photo,method,threshold)
                     pixelated_images.append(photo)
                     photo = Image.fromarray(photo)
                     captions.append(uploaded_file.name)
