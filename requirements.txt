@@ -1,7 +1,7 @@
 streamlit
 ipywidgets
 matplotlib
-numpy
+numpy==1.26.4
 pandas
 torch
 torchvision
